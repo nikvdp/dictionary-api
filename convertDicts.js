@@ -2,15 +2,13 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
 
-var output = {};
-// debug toggle
-if (false) {
-  var entryString = fs.readFileSync('entry.xml', 'utf-8');
-  // printEntry(entryString);
-} else {
+convertDict('./dict.xml');
+
+function convertDict(dictPath) {
+
+  var output = {};
   var readline = require('readline').createInterface({
-    input: fs.createReadStream('dict.xml')
-    // input: fs.createReadStream('entry.xml')
+    input: fs.createReadStream(dictPath)
   });
 
   var lineCount = 0;
@@ -20,12 +18,12 @@ if (false) {
     // console.log('Storing line ', lineCount);
     lineCount++;
   });
-  
+
   readline.on('close', function() {
-    var outputFile = './dict.json';
+    var outputFile = dictPath.replace(/\.xml$/i, '.json');
     console.log('Done! Writing to: ', outputFile);
     fs.writeFileSync(outputFile, JSON.stringify(output));
-  })
+  });
 }
 
 function printJson(entryString) {
@@ -111,3 +109,5 @@ function getAsArr($entry, selector) {
   });
   return results.length > 0 ? results : null;
 }
+
+module.exports.convertDict = convertDict;
