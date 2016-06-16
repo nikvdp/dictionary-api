@@ -10,25 +10,25 @@
  40 Length of the zlib stream
  4c 0020
  54 0275 number of blocks
- 
+
  60 808c pointer to the next block
  64 8088 length of the first block
  68 047a4a length of the unpacked block
  6c start of the zlib stream
- 
+
  80fc second block
- 
+
  13cd134
  13cd174
 */
-     
+
 int unpack(unsigned char *in, int len)
 {
   int ret,outed=0;
   unsigned have;
   z_stream strm;
   unsigned char out[CHUNK];
-  
+
   strm.zalloc = Z_NULL;
   strm.zfree = Z_NULL;
   strm.opaque = Z_NULL;
@@ -83,7 +83,7 @@ char filename[256];
 int main(int argc,char **argv) {
   FILE *fin; int limit,blen=0,p,l,bcnt=0; unsigned char *buf=NULL;
   assert(argc >= 2);
-  sprintf(filename,"/Library/Dictionaries/%s.dictionary/Contents/Resources/Body.data",argv[1]);
+  sprintf(filename,"%s/Contents/Resources/Body.data",argv[1]);
   if((fin=fopen(filename,"rb"))) {
     fseek(fin,0x40,SEEK_SET);
     fread(&l,1,4,fin);
