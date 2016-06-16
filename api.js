@@ -12,11 +12,15 @@ const port = 5000;
 var app = express();
 var server = http.createServer(app);
 
-main();
+var dictionaryConfig;
 
+main();
 
 function main() {
   getDictionaryConfig()
+    .then((dictConfig) => {
+      return dictionaryConfig = dictConfig;
+    })
     .then(loadDictionaries)
     .then(initializeServer);
 }
@@ -57,11 +61,7 @@ function getDictionaryConfig() {
 }
 
 function initializeServer() {
-  app.use('/', router);
-
-  router.get('/', (req, res, next) => {
-    res.send(appName);
-  });
+  app.use('/', declareRoutes());
 
   app.set('port', port);
 
@@ -70,7 +70,54 @@ function initializeServer() {
   server.on('listening', onListening);
 }
 
+function declareRoutes() {
+  var router = express.Router();
+  var baseStructure = {
+    url: "/",
+    resources: {
+      dictionaries: {
+        url: "/dictionaries"
+      },
+      thesauri: {
+        url: "/thesauri"
+      },
+      // definitions: {
+      //   url: "/definitions"
+      // },
+      // synonyms: {
+      //   url: "/synonyms"
+      // }
+    }
+  };
 
+  router.get('/', (req, res, next) => {
+    // lay out the url structure of the API
+    res.json(baseStructure);
+    next();
+  });
+
+  router.get('/dictionaries', (req, res, next) => {
+    res.json(Object.keys(dictionaryConfig));
+    next();
+  });
+
+  router.get('/dictionaries/:word', (req, res, next) => {
+    res.json(Object.keys(dictionaryConfig));
+    next();
+  });
+
+  router.get('/thesauri', (req, res, next) => {
+    var thesauri = Object.keys(dictionaryConfig)
+      .filter((dict) => {
+        return dictionaryConfig[dict].thesaurus;
+      });
+
+    res.json(thesauri);
+    next();
+  });
+
+  return router;
+}
 
 
 // server event handlers
