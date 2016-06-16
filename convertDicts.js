@@ -38,6 +38,7 @@ function dictEntryToJson(entryString) {
     syllables: getSyllables,
     definitions: getDefinitions,
     pos: getPOS,
+    synonyms: getSynonyms,
     examples: getExamples
   };
 
@@ -101,6 +102,18 @@ function getExamples($entry) {
   return getAsArr($entry, '.eg');
 }
 
+function getSynonyms($entry) {
+  var results = [];
+  $entry('.synList .synGroup' ).each(function(en) {
+    var synGroup = [];
+    $entry(this).find('.syn').each(function(syn) {
+      synGroup.push($entry(this).text().trim());
+    });
+    results.push(synGroup);
+  });
+  return results.length > 0 ? results : null;
+}
+
 function getAsArr($entry, selector) {
   var results = [];
   $entry(selector).each(function(example) {
@@ -110,4 +123,4 @@ function getAsArr($entry, selector) {
   return results.length > 0 ? results : null;
 }
 
-module.exports.convertDict = convertDict;
+module.exports.convertDictFromXml = convertDictFromXml;
