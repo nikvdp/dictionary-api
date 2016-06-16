@@ -5,20 +5,25 @@ var fs = require('fs');
 var path = require('path');
 var spawn = require('child_process').spawn;
 
+module.exports.importDictionary = importDictionary;
+
 // convertDictFromXml('./dict.xml');
 
-var dictPath = '/Library/Dictionaries/Oxford Thesaurus of English.dictionary';
-dictPath = '/Library/Dictionaries/New Oxford American Dictionary.dictionary';
+var dictPath = process.argv[1] || '/Library/Dictionaries/New Oxford American Dictionary.dictionary';
 
-dictionaryToXml(dictPath)
-  .then(function(f) {
-    console.log('Wrote xml file to [%s]!', f);
-    return f;
-  })
-  .then(convertDictFromXml)
-  .then(function(f) {
-    console.log('Wrote json file to [%s]!', f);
-  });
+importDictionary(dictPath);
+
+function importDictionary(dictPath) {
+  dictionaryToXml(dictPath)
+    .then(function(f) {
+      console.log('Wrote xml file to [%s]!', f);
+      return f;
+    })
+    .then(convertDictFromXml)
+    .then(function(f) {
+      console.log('Wrote json file to [%s]!', f);
+    });
+}
 
 // var entry = '<d:entry xmlns:d="http://www.apple.com/DTDs/DictionaryService-1.0.rng" id="t_en_gb0000001" d:title="aback" class="entry"><span class="hg"><span role="text" class="hw">aback</span><span class="gp tg_hg"> </span></span><span class="sg"><span class="se1"><span class="gp tg_se1">▶</span><span role="text" class="posg"><span class="pos"><span class="gp tg_pos">adverb</span></span><span class="gp tg_posg"> </span></span><span class="subEntryBlock t_phrases"><span class="gp ty_label tg_subEntryBlock">PHRASES </span><span id="t_en_gb0000001.002" class="subEnt"> <span role="text" class="l">take someone aback </span><span id="t_en_gb0000001.001" class="msThes t_core"><span class="eg"><span class="ex">Joanna was taken aback by the violence of his reaction</span><span class="gp tg_eg">: </span></span><span class="synList"><span class="synGroup"><span class="syn t_core">surprise<span class="gp tg_syn">, </span></span><span class="syn">shock<span class="gp tg_syn">, </span></span><span class="syn">stun<span class="gp tg_syn">, </span></span><span class="syn">stagger<span class="gp tg_syn">, </span></span><span class="syn">astound<span class="gp tg_syn">, </span></span><span class="syn">astonish<span class="gp tg_syn">, </span></span><span class="syn">startle<span class="gp tg_syn">, </span></span><span class="syn">take by surprise</span><span class="gp tg_synGroup">; </span></span><span class="synGroup"><span class="syn">dumbfound<span class="gp tg_syn">, </span></span><span class="syn">daze<span class="gp tg_syn">, </span></span><span class="syn">nonplus<span class="gp tg_syn">, </span></span><span class="syn">stop someone in their tracks<span class="gp tg_syn">, </span></span><span class="syn">stupefy<span class="gp tg_syn">, </span></span><span class="syn">take someone\'s breath away</span><span class="gp tg_synGroup">; </span></span><span class="synGroup"><span class="syn">shake (up)<span class="gp tg_syn">, </span></span><span class="syn">jolt<span class="gp tg_syn">, </span></span><span class="syn">throw<span class="gp tg_syn">, </span></span><span class="syn">unnerve<span class="gp tg_syn">, </span></span><span class="syn">disconcert<span class="gp tg_syn">, </span></span><span class="syn">disturb<span class="gp tg_syn">, </span></span><span class="syn">disquiet<span class="gp tg_syn">, </span></span><span class="syn">unsettle<span class="gp tg_syn">, </span></span><span class="syn">discompose<span class="gp tg_syn">, </span></span><span class="syn">bewilder</span><span class="gp tg_synGroup">; </span></span><span class="synGroup"><span class="lg"><span class="reg"> informal </span><span class="gp tg_lg"> </span></span><span class="syn">flabbergast<span class="gp tg_syn">, </span></span><span class="syn">knock for six<span class="gp tg_syn">, </span></span><span class="syn">knock sideways<span class="gp tg_syn">, </span></span><span class="syn">knock out<span class="gp tg_syn">, </span></span><span class="syn">floor<span class="gp tg_syn">, </span></span><span class="syn">strike dumb</span><span class="gp tg_synGroup">.</span></span></span></span></span></span></span></span></d:entry>';
 // console.log(dictEntryToJson(entry));
@@ -180,4 +185,3 @@ function getAsArr($entry, selector) {
   return results.length > 0 ? results : null;
 }
 
-module.exports.convertDictFromXml = convertDictFromXml;
