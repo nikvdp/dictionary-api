@@ -9,9 +9,11 @@ module.exports.importDictionary = importDictionary;
 
 // convertDictFromXml('./dict.xml');
 
-var dictPath = process.argv[1] || '/Library/Dictionaries/New Oxford American Dictionary.dictionary';
-
-importDictionary(dictPath);
+// var dictPath = process.argv[1];
+//
+// if (dictPath) {
+//   importDictionary(dictPath);
+// }
 
 function importDictionary(dictPath) {
   dictionaryToXml(dictPath)
@@ -30,7 +32,7 @@ function importDictionary(dictPath) {
 
 function dictionaryToXml(dictionary) {
   var outputPath = path.join(__dirname, 'dicts', path.basename(dictionary).replace(/\.dictionary$/i, '.xml'));
-  var output = fs.createWriteStream(outputPath);
+  var outFile = fs.createWriteStream(outputPath);
   // TODO: redo this with node streams instead of shell pipes
   var dedict = spawn('./bin/dedict', [dictionary]);
   var strip = spawn('./bin/strip', []);
@@ -41,7 +43,7 @@ function dictionaryToXml(dictionary) {
 
   strip.stdout.on('data', (data) => {
     // console.log('data: ', data);
-    output.write(data);
+    outFile.write(data);
   });
   //
   // dedict.stderr.on('data', (data) => {
