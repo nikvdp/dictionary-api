@@ -7,13 +7,13 @@ var spawn = require('child_process').spawn;
 
 module.exports.importDictionary = importDictionary;
 
-// convertDictFromXml('./dict.xml');
+if (require.main === module) {
+  var dictPath = process.argv[2];
 
-// var dictPath = process.argv[1];
-//
-// if (dictPath) {
-//   importDictionary(dictPath);
-// }
+  if (dictPath) {
+    importDictionary(dictPath);
+  }
+}
 
 function importDictionary(dictPath) {
   dictionaryToXml(dictPath)
