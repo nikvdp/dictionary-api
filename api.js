@@ -12,6 +12,8 @@ const port = 5000;
 var app = express();
 var server = http.createServer(app);
 
+// this is the main data store variable that holds all our dictionary 
+// data in memory
 var dictionaryConfig;
 
 main();
@@ -29,6 +31,13 @@ function main() {
 // console.log(JSON.stringify(dictionaryConfig, '', 2));
 
 
+/**
+ * Loop through any .json files in our `dicts` folder and load them
+ * into our `dictionaryConfig` variable. 
+ * 
+ * @param dictConfig
+ * @returns {Promise}
+ */
 function loadDictionaries(dictConfig) {
   return new Promise((resolve) => {
 
@@ -48,6 +57,7 @@ function getDictionaryConfig() {
     .readdirSync('./dicts')
     .filter((f) => {return f.match(/\.json$/i)})
     .forEach((dict) => {
+      // regex used to lop off any absolute path's and .json extensions in one go
       var dictName = dict.replace(/(.*\/)?(.*)\.json$/i, (str, $1, $2) => { return $2});
       dictConfig[dictName] = {};
       // for now just determine which ones are thesauri based on filename
@@ -56,7 +66,9 @@ function getDictionaryConfig() {
         dictConfig[dictName].thesaurus = true;
       }
     });
-  // TODO: use q or bluebird so that we can just do q.when instead of writing a resolve
+  // TODO: this is a convoluted way of doing q.when() on dictConfig. In future use 
+  // q or bluebird so that we can just do q.when() instead of writing a resolve
+  // function 
   return new Promise((resolve) => {resolve(dictConfig)});
 }
 
@@ -72,6 +84,8 @@ function initializeServer() {
 
 function declareRoutes() {
   var router = express.Router();
+  
+  // lay out the basic url structure of the API
   var baseStructure = {
     url: "/",
     resources: {
@@ -81,17 +95,20 @@ function declareRoutes() {
       thesauri: {
         url: "/thesauri"
       },
-      // definitions: {
-      //   url: "/definitions"
-      // },
-      // synonyms: {
-      //   url: "/synonyms"
-      // }
+      // TODO: implement grouped searches that combine all loaded dictionaries into one
+      /**
+      result payload instead of requiring client to specify a dictionary
+      definitions: {
+        url: "/definitions"
+      },
+      synonyms: {
+        url: "/synonyms"
+      }
+       **/
     }
   };
 
   router.get('/', (req, res, next) => {
-    // lay out the url structure of the API
     res.json(baseStructure);
   });
 
