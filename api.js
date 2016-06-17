@@ -93,17 +93,18 @@ function declareRoutes() {
   router.get('/', (req, res, next) => {
     // lay out the url structure of the API
     res.json(baseStructure);
-    next();
   });
 
   router.get('/dictionaries', (req, res, next) => {
     res.json(Object.keys(dictionaryConfig));
-    next();
   });
 
-  router.get('/dictionaries/:word', (req, res, next) => {
-    res.json(Object.keys(dictionaryConfig));
-    next();
+  router.get('/dictionaries/:dict/:word', (req, res, next) => {
+    var dict = req.params.dict;
+    var word = req.params.word;
+    console.log('Returning [%s] from [%s]', word, dict);
+    var dictData = dictionaryConfig[dict].data;
+    res.json(dictData[word]);
   });
 
   router.get('/thesauri', (req, res, next) => {
@@ -114,6 +115,19 @@ function declareRoutes() {
 
     res.json(thesauri);
     next();
+  });
+
+  router.get('/thesauri/:dict/:word', (req, res, next) => {
+    var dict = req.params.dict;
+    var word = req.params.word;
+    console.log('Returning [%s] from [%s]', word, dict);
+    if (! dictionaryConfig[dict].thesaurus) {
+      res.status(500).json({error: 'Dictionary ' + dict + ' is not a thesaurus!'});
+      next();
+    } else {
+      var dictData = dictionaryConfig[dict].data;
+      res.json(dictData[word]);
+    }
   });
 
   return router;
