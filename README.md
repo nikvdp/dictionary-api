@@ -1,5 +1,7 @@
 # OS X Dictionary API
 
+<!-- testing 1 2 3 4-->
+
 ### Installation and Setup
 
 Clone the repository and run npm install:
@@ -93,4 +95,3 @@ And to look up synonyms for the word volley you could do the following:
 curl "localhost:5000/dictionaries/Oxford%20American%20Writer's%20Thesaurus/volley"
 ```
 
- <!-- testing 1 2 3 -->
